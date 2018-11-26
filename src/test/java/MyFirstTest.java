@@ -53,15 +53,7 @@ public class MyFirstTest {
     @Test
     public void login(){
         try {
-            Thread.sleep(2000);
-            Actions action = new Actions(driver);
-            action.moveToElement(driver.findElement(By.name("profile")))
-                    .build()
-                    .perform();
-            driver.findElement(By.name("signout")).click();
-            wait.until(driver1 -> driver1.findElement(By.xpath("//div[@class=\"logo\"]")).isDisplayed()); //wait until logo is displayed
-            Thread.sleep(300);
-
+            logout();
         } catch (Exception e){
             System.out.println("User is not logged in");
         }
@@ -140,13 +132,40 @@ public class MyFirstTest {
             System.out.println(resultName);
 
             firstResultName.click();
-            //Thread.sleep(5000);
             wait.until(driver -> driver.findElement(By.className("responsive-img")).isDisplayed());
             String productName = driver.findElement(By.xpath("//*[@class=\"detail-title h1\"]")).getText().trim();
             System.out.println(productName);
             Assert.assertEquals("Did not open same product", resultName, productName);
         }
         catch (Exception e) {
+            System.out.println("exception: "+ e);
+        }
+    }
+
+    @Test
+    public void register(){
+        try {
+            logout();
+        } catch (Exception logoutException) {
+            System.out.println(logoutException);
+        }
+
+        try {
+            driver.findElement(By.name("signin")).click();
+            driver.findElement(By.className("auth-f-signup")).click();
+            wait.until(driver1 -> driver1.findElement(By.xpath("//div[@class=\"logo\"]")).isDisplayed()); //wait until logo is displayed
+            int randomNumber = (int)(Math.random()*1000);
+            clickClearType(driver.findElement(By.name("title")),"testuser"+randomNumber);
+            clickClearType(driver.findElement(By.name("login")), "testuser"+randomNumber+"@yahoo.at");
+            System.out.println("Login:    testuser"+randomNumber+"@yahoo.at");
+            System.out.println("Password: Test1234");
+            clickClearType(driver.findElement(By.name("password")), "Test1234");
+            driver.findElement(By.xpath("//div[@class=\"signup-submit\"]//*[@class=\"btn-link-i\"]")).click();
+            wait.until(driver1 -> driver1.findElement(By.xpath("//div[@class=\"addit-f-i-field\"]/*[contains(text(),\"testuser"+randomNumber+"@yahoo.at\")]")).isDisplayed()); //wait until login is displayed
+            Thread.sleep(1000);
+
+
+        } catch (Exception e) {
             System.out.println("exception: "+ e);
         }
     }
