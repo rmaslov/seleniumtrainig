@@ -1,4 +1,5 @@
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.*;
@@ -12,9 +13,8 @@ import java.util.List;
 
 public class MyFirstTest {
     private WebDriver driver = new InternetExplorerDriver();
-    //private WebElement searchBar = driver.findElement(By.xpath("//div[@id=\"rz-search\"]//input[@type=\"text\"]")); //commit comment
 
-    private Wait<WebDriver> oiWeit = new FluentWait<>(driver)
+    private Wait<WebDriver> wait = new FluentWait<>(driver)
             .withTimeout(Duration.ofSeconds(10))
             .pollingEvery(Duration.ofSeconds(1))
             .ignoring(WebDriverException.class);
@@ -25,18 +25,23 @@ public class MyFirstTest {
         textBox.sendKeys(text);
     }
 
-    @Before
-    public void launchDriver(){
-        //driver = new InternetExplorerDriver();
+    //@Before
+    public void launchDriverViaGoogle(){
         driver.navigate().to("https://www.google.com");
         WebElement googleSearchTextbox = driver.findElement(By.xpath("//input[@type=\"text\"]"));
 
         clickClearType(googleSearchTextbox, "rozetka" + Keys.ENTER); //Search in Google
 
 
-        oiWeit.until(driver1 -> driver.findElement(By.xpath("//a[contains(@href,\"rozetka.com.ua\")]/h3")).isDisplayed()); //oiWeit until search result is present
+        wait.until(driver1 -> driver.findElement(By.xpath("//a[contains(@href,\"rozetka.com.ua\")]/h3")).isDisplayed()); //wait until search result is present
         driver.findElement(By.xpath("//a[contains(@href,\"rozetka.com.ua\")]/h3")).click();
-        oiWeit.until(driver1 -> driver1.findElement(By.xpath("//div[@class=\"logo\"]")).isDisplayed()); //oiWeit until logo is displayed
+        wait.until(driver1 -> driver1.findElement(By.xpath("//div[@class=\"logo\"]")).isDisplayed()); //wait until logo is displayed
+    }
+
+    @Before
+    public void launchDriver(){
+        driver.navigate().to("https://rozetka.com.ua");
+        wait.until(driver1 -> driver1.findElement(By.xpath("//div[@class=\"logo\"]")).isDisplayed()); //wait until logo is displayed
     }
 
     @After
@@ -54,7 +59,7 @@ public class MyFirstTest {
                     .build()
                     .perform();
             driver.findElement(By.name("signout")).click();
-            oiWeit.until(driver1 -> driver1.findElement(By.xpath("//div[@class=\"logo\"]")).isDisplayed()); //oiWeit until logo is displayed
+            wait.until(driver1 -> driver1.findElement(By.xpath("//div[@class=\"logo\"]")).isDisplayed()); //wait until logo is displayed
             Thread.sleep(300);
 
         } catch (Exception e){
@@ -65,7 +70,7 @@ public class MyFirstTest {
         clickClearType(driver.findElement(By.name("password")), "Test1234");
         driver.findElement(By.name("auth_submit")).click();
 
-        oiWeit.until(driver1 -> driver1.findElement(By.name("profile")).isDisplayed()); //oiWeit until logo is displayed
+        wait.until(driver1 -> driver1.findElement(By.name("profile")).isDisplayed()); //wait until logo is displayed
     }
 
     @Test
@@ -77,7 +82,7 @@ public class MyFirstTest {
                     .build()
                     .perform();
             driver.findElement(By.name("signout")).click();
-            oiWeit.until(driver1 -> driver1.findElement(By.xpath("//div[@class=\"logo\"]")).isDisplayed()); //oiWeit until logo is displayed
+            wait.until(driver1 -> driver1.findElement(By.xpath("//div[@class=\"logo\"]")).isDisplayed()); //wait until logo is displayed
             Thread.sleep(300);
 
         } catch (Exception e){
@@ -95,7 +100,7 @@ public class MyFirstTest {
             clickClearType(searchBar, "Play station 4 pro" + Keys.ENTER);
 
             By searchCount = By.xpath("//i[@class=\"m-cat-l-i-all-count\"]");
-            oiWeit.until(driver1 -> driver1.findElement(searchCount).isDisplayed()); //oiWeit until search count is displayed
+            wait.until(driver1 -> driver1.findElement(searchCount).isDisplayed()); //wait until search count is displayed
             Thread.sleep(500);
             results = Integer.parseInt(driver.findElement(searchCount).getText().substring(1, driver.findElement(searchCount).getText().length()-1));
             List<WebElement> resultElements = driver.findElements(By.xpath("(//div[@class=\"g-i-tile-i-box\"])"));
@@ -114,6 +119,32 @@ public class MyFirstTest {
                 System.out.print("[Name: "+driver.findElement(By.xpath("(//div[@class=\"g-i-tile-i-title clearfix\"])["+elementNumber+"]/a")).getText()+"]");
                 System.out.println("[Price: "+driver.findElement(By.xpath("(//div[@class=\"inline\"]/div[@name=\"price\"]//span[1])["+elementNumber+"]")).getText()+"]");
             }
+        }
+        catch (Exception e) {
+            System.out.println("exception: "+ e);
+        }
+    }
+
+    @Test
+    public void openFirstTestResult() {
+        try {
+            WebElement searchBar = driver.findElement(By.xpath("//div[@id=\"rz-search\"]//input[@type=\"text\"]"));
+            clickClearType(searchBar, "Play station 4 pro" + Keys.ENTER);
+
+            By searchCount = By.xpath("//i[@class=\"m-cat-l-i-all-count\"]");
+            wait.until(driver1 -> driver1.findElement(searchCount).isDisplayed()); //wait until search count is displayed
+            Thread.sleep(500);
+
+            WebElement firstResultName = driver.findElement(By.xpath("(//div[@class=\"g-i-tile-i-title clearfix\"])[1]/a"));
+            String resultName = firstResultName.getText().trim();
+            System.out.println(resultName);
+
+            firstResultName.click();
+            //Thread.sleep(5000);
+            wait.until(driver -> driver.findElement(By.className("responsive-img")).isDisplayed());
+            String productName = driver.findElement(By.xpath("//*[@class=\"detail-title h1\"]")).getText().trim();
+            System.out.println(productName);
+            Assert.assertEquals("Did not open same product", resultName, productName);
         }
         catch (Exception e) {
             System.out.println("exception: "+ e);
