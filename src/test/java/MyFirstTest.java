@@ -36,19 +36,19 @@ public class MyFirstTest {
         wait.until(driver1 -> driver.findElement(By.xpath("//a[contains(@href,\"rozetka.com.ua\")]/h3")).isDisplayed()); //wait until search result is present
         driver.findElement(By.xpath("//a[contains(@href,\"rozetka.com.ua\")]/h3")).click();
         wait.until(driver1 -> driver1.findElement(By.xpath("//div[@class=\"logo\"]")).isDisplayed()); //wait until logo is displayed
-    }
+    }  //choose either of @before, this one opening store from google
 
     @Before
     public void launchDriver(){
         driver.navigate().to("https://rozetka.com.ua");
         wait.until(driver1 -> driver1.findElement(By.xpath("//div[@class=\"logo\"]")).isDisplayed()); //wait until logo is displayed
-    }
+    }  //this one launch driver straight from store address
 
     @After
     public void exitDriver(){
         driver.close();
         driver.quit();
-    }
+    }  //quits and closes driver after executing each test
 
     @Test
     public void login(){
@@ -63,7 +63,7 @@ public class MyFirstTest {
         driver.findElement(By.name("auth_submit")).click();
 
         wait.until(driver1 -> driver1.findElement(By.name("profile")).isDisplayed()); //wait until logo is displayed
-    }
+    }  //test login with pre-defined data
 
     @Test
     public void logout(){
@@ -80,7 +80,7 @@ public class MyFirstTest {
         } catch (Exception e){
             System.out.println("User is not logged in");
         }
-    }
+    }  //test logout
 
     @Test
     public void searchTest() {
@@ -115,7 +115,7 @@ public class MyFirstTest {
         catch (Exception e) {
             System.out.println("exception: "+ e);
         }
-    }
+    }  //test search and compares quantity of test results to actual one
 
     @Test
     public void openFirstTestResult() {
@@ -140,7 +140,7 @@ public class MyFirstTest {
         catch (Exception e) {
             System.out.println("exception: "+ e);
         }
-    }
+    }  //test search, opens first result and compares name from PLP and PDP
 
     @Test
     public void register(){
@@ -168,5 +168,5 @@ public class MyFirstTest {
         } catch (Exception e) {
             System.out.println("exception: "+ e);
         }
-    }
+    }  //test registration
 }
